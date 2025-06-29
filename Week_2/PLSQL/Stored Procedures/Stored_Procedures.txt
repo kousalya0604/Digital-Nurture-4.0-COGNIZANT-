@@ -1,0 +1,75 @@
+
+--SCENARIO 1
+
+DELIMITER $$
+
+CREATE PROCEDURE ProcessMonthlyInterest()
+BEGIN
+    -- Apply 1% interest to all savings accounts
+    UPDATE Accounts
+    SET Balance = Balance + (Balance * 0.01)
+    WHERE AccountType = 'Savings';
+
+    -- Return success message
+    SELECT '1% interest applied to all savings accounts.' AS Message;
+END $$
+
+DELIMITER ;
+
+
+--SCENARIO 2
+
+DELIMITER $$
+
+CREATE PROCEDURE UpdateEmployeeBonus(
+    IN deptName VARCHAR(50),
+    IN bonusPercent DECIMAL(5,2)
+)
+BEGIN
+    UPDATE Employees
+    SET Salary = Salary + (Salary * (bonusPercent / 100))
+    WHERE Department = deptName;
+
+    SELECT CONCAT('Bonus of ', bonusPercent, '% applied to department: ', deptName) AS Message;
+END $$
+
+DELIMITER ;
+
+
+--SCENARIO 3
+
+DELIMITER $$
+
+CREATE PROCEDURE TransferFunds(
+    IN fromAccountID INT,
+    IN toAccountID INT,
+    IN transferAmount DECIMAL(10,2)
+)
+BEGIN
+    DECLARE fromBalance DECIMAL(10,2);
+
+    -- Get source account balance
+    SELECT Balance INTO fromBalance FROM Accounts WHERE AccountID = fromAccountID;
+
+    -- Check sufficient funds
+    IF fromBalance >= transferAmount THEN
+        -- Deduct from source
+        UPDATE Accounts
+        SET Balance = Balance - transferAmount
+        WHERE AccountID = fromAccountID;
+
+        -- Add to destination
+        UPDATE Accounts
+        SET Balance = Balance + transferAmount
+        WHERE AccountID = toAccountID;
+
+        -- Optional message
+        SELECT CONCAT('Transfer of ₹', transferAmount, ' from Account ', fromAccountID,
+                      ' to Account ', toAccountID, ' completed.') AS Message;
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Insufficient funds in source account';
+    END IF;
+END $$
+
+DELIMITER ;
