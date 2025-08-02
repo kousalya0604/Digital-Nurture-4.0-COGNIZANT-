@@ -1,0 +1,32 @@
+/* src/App.css */
+.container {
+  display: flex;
+  justify-content: space-around;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+.column {
+  width: 30%;
+  padding: 10px;
+  border-left: 4px solid green;
+}
+
+.column:first-child {
+  border-left: none;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+h3 {
+  font-size: 1.2em;
+  margin: 10px 0 5px;
+}
+
+strong {
+  display: block;
+  margin-bottom: 5px;
+}
